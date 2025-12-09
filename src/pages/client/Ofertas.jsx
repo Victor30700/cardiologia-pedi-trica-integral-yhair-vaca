@@ -1,9 +1,21 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { db } from "../../firebase/config";
-import { collection, getDocs, addDoc, doc, getDoc } from "firebase/firestore";
+import { 
+  collection, 
+  addDoc, 
+  doc, 
+  getDoc, 
+  getDocs,
+  query, 
+  where, 
+  onSnapshot, 
+  orderBy,
+  serverTimestamp 
+} from "firebase/firestore";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import "./Ofertas.css"; // Estilos similares
+import Swal from "sweetalert2";
+import "./Ofertas.css";
 
 export default function Ofertas() {
   const [servicios, setServicios] = useState([]);
@@ -11,35 +23,116 @@ export default function Ofertas() {
   const [cita, setCita] = useState({ fecha: "", hora: "", servicioId: "", servicioNombre: "" });
   const [loading, setLoading] = useState(true);
   
+  // Estado para guardar las citas del usuario
+  const [misCitas, setMisCitas] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  const formRef = useRef(null); // Referencia para scroll automático al formulario
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  // Cargar Servicios y Horario
+  // 1. Cargar Servicios y Horario (Solo se ejecuta una vez)
   useEffect(() => {
     const cargarDatos = async () => {
-      const servData = await getDocs(collection(db, "servicios"));
-      setServicios(servData.docs.map(d => ({ ...d.data(), id: d.id })));
-      
-      const configSnap = await getDoc(doc(db, "configuracion", "horarioGeneral"));
-      if(configSnap.exists()) setHorario(configSnap.data());
-      
-      setLoading(false);
+      try {
+        const servData = await getDocs(collection(db, "servicios"));
+        setServicios(servData.docs.map(d => ({ ...d.data(), id: d.id })));
+        
+        const configSnap = await getDoc(doc(db, "configuracion", "horarioGeneral"));
+        if(configSnap.exists()) setHorario(configSnap.data());
+      } catch (error) {
+        console.error("Error al cargar datos:", error);
+      } finally {
+        setLoading(false);
+      }
     };
     cargarDatos();
   }, []);
 
+  // 2. ESCUCHAR CITAS DEL USUARIO EN TIEMPO REAL
+  useEffect(() => {
+    if (!user) return;
+
+    // IMPORTANTE: Si la consola muestra un error de "requires an index", 
+    // debes hacer clic en el enlace que aparece allí para crearlo en Firebase.
+    const q = query(
+      collection(db, "citas"), 
+      where("userId", "==", user.uid),
+      orderBy("creadoEn", "desc")
+    );
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const citasData = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
+      setMisCitas(citasData);
+    }, (error) => {
+      console.error("⚠️ Error obteniendo citas (Posible falta de índice):", error);
+    });
+
+    return () => unsubscribe();
+  }, [user]);
+
+  // Función auxiliar para seleccionar servicio y hacer scroll
+  const seleccionarServicio = (servicio) => {
+    setCita({ ...cita, servicioId: servicio.id, servicioNombre: servicio.nombre });
+    // Scroll suave hacia el formulario
+    setTimeout(() => {
+      formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 100);
+  };
+
   // Manejar Reserva
   const reservarCita = async (e) => {
     e.preventDefault();
-    if (!user) return navigate("/login");
-    if (!cita.fecha || !cita.hora || !cita.servicioId) return alert("Selecciona fecha y hora");
 
-    // Validación simple de horario
+    if (!user) {
+      return Swal.fire({
+        icon: 'warning', 
+        title: 'Inicia sesión', 
+        text: 'Debes estar registrado para agendar.',
+        confirmButtonColor: '#007bff'
+      }).then(() => navigate("/login"));
+    }
+
+    if (!cita.fecha || !cita.hora || !cita.servicioId) {
+      return Swal.fire({ 
+        icon: 'warning', 
+        title: 'Faltan datos', 
+        text: 'Selecciona fecha y hora.',
+        confirmButtonColor: '#ffc107'
+      });
+    }
+
     if (horario) {
       if (cita.hora < horario.entrada || cita.hora > horario.salida) {
-        return alert(`El doctor atiende de ${horario.entrada} a ${horario.salida}`);
+        return Swal.fire({ 
+          icon: 'error', 
+          title: 'Horario no disponible', 
+          text: `Atención de ${horario.entrada} a ${horario.salida}.`,
+          confirmButtonColor: '#dc3545'
+        });
       }
     }
+
+    const result = await Swal.fire({
+      title: '¿Confirmar reserva?',
+      html: `
+        <div style="text-align:left; font-size: 1.1rem">
+          <p><strong>Servicio:</strong> ${cita.servicioNombre}</p>
+          <p><strong>Fecha:</strong> ${cita.fecha}</p>
+          <p><strong>Hora:</strong> ${cita.hora}</p>
+        </div>
+      `,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, agendar',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#28a745',
+      cancelButtonColor: '#6c757d'
+    });
+
+    if (!result.isConfirmed) return;
+
+    setIsSubmitting(true);
 
     try {
       await addDoc(collection(db, "citas"), {
@@ -48,53 +141,164 @@ export default function Ofertas() {
         servicio: cita.servicioNombre,
         fecha: cita.fecha,
         hora: cita.hora,
-        estado: "pendiente", // pendiente, confirmada, cancelada
-        creadoEn: new Date()
+        estado: "pendiente",
+        creadoEn: serverTimestamp() 
       });
-      alert("¡Cita reservada con éxito! El doctor se pondrá en contacto.");
-      setCita({ fecha: "", hora: "", servicioId: "", servicioNombre: "" }); // Reset
+
+      await Swal.fire({
+        icon: 'success',
+        title: '¡Cita Enviada!',
+        text: 'Tu solicitud ha sido enviada y está pendiente de aprobación.',
+        timer: 3000,
+        showConfirmButton: false
+      });
+
+      // Limpiar formulario
+      setCita({ fecha: "", hora: "", servicioId: "", servicioNombre: "" }); 
+
     } catch (error) {
-      console.error("Error al reservar:", error);
-      alert("Hubo un error al reservar.");
+      console.error(error);
+      Swal.fire({ icon: 'error', title: 'Error', text: 'No se pudo registrar la cita.' });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  return (
-    <div className="ofertas-container">
-      <h1>Oferta de Servicios Médicos</h1>
-      <p>Selecciona un servicio y agenda tu cita.</p>
+  // Etiquetas y colores para el estado
+  const getStatusLabel = (estado) => {
+    if (estado === 'confirmada') return 'Confirmada';
+    if (estado === 'cancelada') return 'Cancelada';
+    return 'Pendiente';
+  };
 
-      {/* FORMULARIO DE RESERVA FLOTANTE O EN CABECERA */}
+  const getStatusIcon = (estado) => {
+    if (estado === 'confirmada') return '✅';
+    if (estado === 'cancelada') return '❌';
+    return '⏳';
+  };
+
+  if (loading) return (
+    <div className="loading-container">
+      <div className="spinner"></div>
+      <p>Cargando servicios...</p>
+    </div>
+  );
+
+  return (
+    <div className="ofertas-container fade-in">
+      <header className="ofertas-header slide-up">
+        <h1>Oferta de Servicios Médicos</h1>
+        <p>Selecciona un servicio y agenda tu cita.</p>
+      </header>
+
+      {/* Punto de anclaje para el scroll */}
+      <div ref={formRef}></div>
+
+      {/* FORMULARIO FLOTANTE (ESTILO NUEVO) */}
       {cita.servicioId && (
-        <div className="reserva-card">
-          <h3>Reservando: {cita.servicioNombre}</h3>
-          <form onSubmit={reservarCita}>
-            <label>Fecha: <input type="date" required min={new Date().toISOString().split('T')[0]} onChange={e => setCita({...cita, fecha: e.target.value})} /></label>
-            <label>Hora: <input type="time" required onChange={e => setCita({...cita, hora: e.target.value})} /></label>
-            <div className="botones-reserva">
-              <button type="submit" className="btn-confirmar">Confirmar Cita</button>
-              <button type="button" onClick={() => setCita({ fecha: "", hora: "", servicioId: "", servicioNombre: "" })} className="btn-cancelar">Cancelar</button>
+        <div className="reserva-wrapper pop-in">
+          <div className="reserva-card">
+            <div className="reserva-header">
+              <h3>Reservando: <span className="reserva-servicio">{cita.servicioNombre}</span></h3>
             </div>
-          </form>
+            
+            <form onSubmit={reservarCita} className="reserva-form">
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Fecha:</label>
+                  <input 
+                    type="date" 
+                    required 
+                    min={new Date().toISOString().split('T')[0]} 
+                    value={cita.fecha} 
+                    onChange={e => setCita({...cita, fecha: e.target.value})} 
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Hora:</label>
+                  <input 
+                    type="time" 
+                    required 
+                    value={cita.hora} 
+                    onChange={e => setCita({...cita, hora: e.target.value})} 
+                  />
+                </div>
+              </div>
+
+              <div className="botones-reserva">
+                <button type="button" onClick={() => setCita({ fecha: "", hora: "", servicioId: "", servicioNombre: "" })} className="btn-cancelar" disabled={isSubmitting}>
+                  Cancelar
+                </button>
+                <button type="submit" className="btn-confirmar" disabled={isSubmitting}>
+                  {isSubmitting ? <span className="spinner-mini"></span> : 'Confirmar Cita'}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
 
-      {/* GRILLA DE SERVICIOS */}
+      {/* LISTA DE SERVICIOS */}
       <div className="servicios-grid">
-        {servicios.map(servicio => (
-          <div key={servicio.id} className="card-servicio">
+        {servicios.map((servicio, index) => (
+          <div key={servicio.id} className="card-servicio slide-up" style={{ animationDelay: `${index * 0.1}s` }}>
+            <div className="card-icon">🩺</div>
             <h3>{servicio.nombre}</h3>
-            <p className="precio">{servicio.precio} Bs</p>
-            <p className="duracion">⏱ {servicio.duracion} min</p>
+            
+            <div className="card-details">
+              <span className="precio-tag">{servicio.precio} Bs</span>
+              <span className="duracion-tag">⏱ {servicio.duracion} min</span>
+            </div>
+
             <button 
               className="btn-agendar"
-              onClick={() => setCita({ ...cita, servicioId: servicio.id, servicioNombre: servicio.nombre })}
+              onClick={() => seleccionarServicio(servicio)}
+              disabled={isSubmitting}
             >
               Agendar Cita
             </button>
           </div>
         ))}
       </div>
+
+      {/* --- LISTA DE CITAS DEL USUARIO --- */}
+      {user && (
+        <div className="mis-citas-section slide-up delay-2">
+          <div className="section-header">
+            <h2>📋 Estado de mis Citas</h2>
+            <div className="divider"></div>
+          </div>
+
+          {misCitas.length === 0 ? (
+            <div className="no-citas">
+              <p>No has registrado ninguna cita todavía.</p>
+              <small>Tus reservas pendientes y confirmadas aparecerán aquí.</small>
+            </div>
+          ) : (
+            <div className="citas-user-grid">
+              {misCitas.map(c => (
+                <div key={c.id} className={`cita-user-card status-${c.estado}`}>
+                  <div className="cita-top">
+                    <span className="cita-fecha">📅 {c.fecha}</span>
+                    <span className={`badge badge-${c.estado}`}>
+                      {getStatusIcon(c.estado)} {getStatusLabel(c.estado)}
+                    </span>
+                  </div>
+
+                  <h4 className="cita-servicio-name">{c.servicio}</h4>
+                  <p className="cita-hora">⏰ Hora: <strong>{c.hora}</strong></p>
+                  
+                  {c.estado === 'pendiente' && (
+                    <div className="footer-pendiente">
+                      <small>Esperando confirmación del doctor...</small>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

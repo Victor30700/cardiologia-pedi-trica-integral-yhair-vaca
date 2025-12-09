@@ -1,6 +1,99 @@
-.ubicacion-container { padding: 20px; max-width: 900px; margin: 0 auto; text-align: center; }
-.map-view { border: 4px solid white; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-radius: 10px; overflow: hidden; }
-.map-footer { margin-top: 20px; }
-.btn-google-maps { display: inline-block; background: #34a853; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold; }
-.btn-google-maps:hover { background: #2c8e45; }
-.no-map { background: #fff3cd; color: #856404; padding: 20px; border-radius: 8px; border: 1px solid #ffeeba; }
+.ubicacion-container {
+  padding: 40px 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+  min-height: 80vh; /* Para que ocupe buena parte de la pantalla */
+}
+
+/* Tarjeta Principal */
+.location-card {
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08); /* Sombra elegante */
+  padding: 40px;
+  text-align: center;
+}
+
+.location-header h1 {
+  color: #2c3e50;
+  font-size: 2.2rem;
+  margin-bottom: 10px;
+}
+
+.location-header p {
+  color: #7f8c8d;
+  font-size: 1.1rem;
+  margin-bottom: 30px;
+}
+
+/* Contenedor del Mapa */
+.map-wrapper {
+  height: 450px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 4px solid #fff;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  margin-bottom: 25px;
+}
+
+/* Pie del mapa con botón */
+.map-footer {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 10px;
+  border: 1px solid #eee;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.map-footer p {
+  margin: 0;
+  font-weight: 600;
+  color: #333;
+}
+
+.btn-google-maps {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #4285F4; /* Azul oficial de Google Maps */
+  color: white;
+  padding: 12px 30px;
+  text-decoration: none;
+  border-radius: 50px; /* Botón píldora */
+  font-weight: bold;
+  font-size: 1rem;
+  transition: transform 0.2s, background-color 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 6px rgba(66, 133, 244, 0.3);
+}
+
+.btn-google-maps:hover {
+  background: #3367d6;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(66, 133, 244, 0.4);
+}
+
+/* Estado Vacío */
+.no-map {
+  background: #fff3cd;
+  color: #856404;
+  padding: 30px;
+  border-radius: 10px;
+  border: 1px solid #ffeeba;
+  font-weight: bold;
+}
+
+/* Adaptabilidad Móvil */
+@media (max-width: 768px) {
+  .location-card {
+    padding: 20px;
+  }
+  .map-wrapper {
+    height: 350px;
+  }
+  .location-header h1 {
+    font-size: 1.8rem;
+  }
+}

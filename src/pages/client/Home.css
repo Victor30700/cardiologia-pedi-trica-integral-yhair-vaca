@@ -1,97 +1,253 @@
-/* Hero Section con fondo degradado o imagen */
+/* =========================================
+   1. PANTALLA DE CARGA (LOADER)
+   ========================================= */
+.loader-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.medical-pulse {
+  width: 50px;
+  height: 50px;
+  background-color: #007bff;
+  border-radius: 50%;
+  animation: pulse-ring 1.5s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+}
+
+.loader-overlay p {
+  margin-top: 15px;
+  color: #007bff;
+  font-weight: 600;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(0.33); opacity: 1; }
+  80%, 100% { transform: scale(2); opacity: 0; }
+}
+
+/* =========================================
+   2. ESTILOS PRINCIPALES
+   ========================================= */
+
+/* Forzamos fondo claro para eliminar los fondos oscuros anteriores */
+.home-container {
+  background-color: #f4f7f6; /* Gris muy suave, casi blanco */
+  min-height: 100vh;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+/* HERO SECTION */
 .hero-section {
-  background: linear-gradient(135deg, #007bff 0%, #00c6ff 100%);
+  background: linear-gradient(135deg, #007bff 0%, #00d2ff 100%);
   color: white;
-  padding: 80px 20px;
+  padding: 120px 20px;
   text-align: center;
   border-bottom-left-radius: 50px;
   border-bottom-right-radius: 50px;
+  box-shadow: 0 10px 20px rgba(0, 123, 255, 0.15);
+  position: relative;
 }
 
+.hero-content {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* --- CORRECCIÓN DEL TÍTULO --- */
 .hero-content h1 {
-  font-size: 3rem;
-  margin-bottom: 10px;
+  font-size: 3.5rem;
+  margin-bottom: 20px;
+  line-height: 1.1;
+  font-weight: 800;
+  
+  /* COLOR BLANCO FORZADO */
+  color: #ffffff !important; 
+  
+  /* SOMBRA PARA QUE RESALTE */
+  text-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); 
 }
 
 .hero-content p {
-  font-size: 1.2rem;
-  margin-bottom: 30px;
-  opacity: 0.9;
+  font-size: 1.3rem;
+  margin-bottom: 35px;
+  opacity: 0.95;
+  color: #f0f8ff; /* Blanco ligeramente azulado */
 }
 
+/* BOTONES */
 .hero-buttons {
   display: flex;
-  gap: 15px;
+  gap: 20px;
   justify-content: center;
+  flex-wrap: wrap;
 }
 
 .btn-hero {
-  padding: 12px 25px;
+  padding: 12px 35px;
   border-radius: 30px;
   text-decoration: none;
   font-weight: bold;
-  transition: transform 0.2s;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
 }
 
 .btn-hero.primary {
   background: white;
   color: #007bff;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
 .btn-hero.secondary {
   border: 2px solid white;
   color: white;
+  background: transparent;
 }
 
 .btn-hero:hover {
-  transform: scale(1.05);
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0,0,0,0.2);
 }
 
-/* Welcome Section */
+/* WELCOME SECTION */
 .welcome-section {
-  padding: 60px 20px;
+  padding: 80px 20px;
   text-align: center;
   max-width: 800px;
   margin: 0 auto;
 }
 
 .welcome-section h2 {
-  color: #333;
+  font-size: 2.2rem;
+  color: #2c3e50; /* Gris oscuro elegante */
   margin-bottom: 20px;
 }
 
 .welcome-section p {
-  color: #666;
-  line-height: 1.6;
+  color: #555;
   font-size: 1.1rem;
+  line-height: 1.8;
 }
 
-/* Features Section */
+/* CARDS DE SERVICIOS */
 .features-section {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 30px;
-  padding: 40px 20px 80px;
-  max-width: 1000px;
+  padding: 20px 20px 80px;
+  max-width: 1200px;
   margin: 0 auto;
 }
 
 .feature-card {
-  background: #f9f9f9;
-  padding: 30px;
-  border-radius: 15px;
+  background: #ffffff;
+  padding: 40px 25px;
+  border-radius: 20px;
   text-align: center;
+  /* Sombra suave inicial */
   box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-  transition: transform 0.3s;
+  border: 1px solid #eee;
+  transition: transform 0.3s, box-shadow 0.3s;
 }
 
 .feature-card:hover {
-  transform: translateY(-5px);
-  background: #fff;
-  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+  transform: translateY(-10px);
+  box-shadow: 0 15px 30px rgba(0, 123, 255, 0.1);
+  border-color: #b3d7ff;
+}
+
+.feature-card .icon {
+  font-size: 3rem;
+  margin-bottom: 15px;
+  display: inline-block;
+  background: #eef7ff;
+  width: 70px;
+  height: 70px;
+  line-height: 70px;
+  border-radius: 50%;
 }
 
 .feature-card h3 {
   color: #007bff;
   margin-bottom: 10px;
+  font-size: 1.3rem;
+}
+
+.feature-card p {
+  color: #666;
+}
+
+/* =========================================
+   3. ANIMACIONES DE ENTRADA
+   ========================================= */
+
+/* Animación de entrada de página */
+.fade-in-page {
+  animation: fadeIn 1s ease-out forwards;
+}
+
+/* Texto del título deslizándose hacia arriba */
+.title-animate {
+  animation: slideUp 0.8s ease-out forwards;
+}
+
+/* Elementos con retraso (delays) */
+.fade-up-delay-1 {
+  opacity: 0;
+  animation: slideUp 0.8s ease-out 0.2s forwards;
+}
+.fade-up-delay-2 {
+  opacity: 0;
+  animation: slideUp 0.8s ease-out 0.4s forwards;
+}
+.fade-up-delay-3 {
+  opacity: 0;
+  animation: slideUp 0.8s ease-out 0.6s forwards;
+}
+
+/* KEYFRAMES */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* RESPONSIVE MÓVIL */
+@media (max-width: 600px) {
+  .hero-section {
+    padding: 80px 20px;
+    border-radius: 0 0 30px 30px;
+  }
+  .hero-content h1 {
+    font-size: 2.2rem;
+  }
+  .hero-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+  .btn-hero {
+    width: 100%;
+    box-sizing: border-box;
+  }
 }

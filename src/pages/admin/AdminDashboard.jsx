@@ -70,6 +70,13 @@ export default function AdminDashboard() {
           <p>Artículos de Investigación</p>
           <Link to="/admin/investigacion">Gestionar Blog</Link>
         </div>
+        {/* <--- NUEVA TARJETA DE ACCESO RÁPIDO --- */}
+        <div className="stat-card">
+          <h2>CV</h2>
+          <p>Perfil Profesional</p>
+          <Link to="/admin/curriculum">Gestionar Currículum</Link>
+        </div>
+        {/* -------------------------------------- */}
       </div>
       
       {/* Citas Recientes */}

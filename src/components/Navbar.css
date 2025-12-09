@@ -1,11 +1,112 @@
 .navbar {
+  background-color: #007bff; /* Color azul primario */
+  color: white;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #007bff; /* Azul médico */
-  padding: 1rem 2rem;
-  color: white;
+  padding: 15px 30px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
-.navbar a { color: white; text-decoration: none; font-weight: bold; }
-.nav-links { display: flex; list-style: none; gap: 20px; }
-.btn-logout { background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; }
+
+.logo a {
+  color: white;
+  text-decoration: none;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.nav-links {
+  list-style: none;
+  display: flex; /* Horizontal por defecto */
+  margin: 0;
+  padding: 0;
+  align-items: center;
+  transition: transform 0.3s ease-out; /* Transición para móvil */
+}
+
+.nav-links li {
+  margin-left: 25px;
+}
+
+.nav-links a, .nav-links button {
+  color: white;
+  text-decoration: none;
+  font-size: 1rem;
+  padding: 8px 10px;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+
+.nav-links a:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.btn-logout {
+  background-color: #dc3545; /* Rojo para cerrar sesión */
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.btn-logout:hover {
+  background-color: #c82333;
+}
+
+/* Botón de Hamburguesa - Oculto por defecto en desktop */
+.menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.8rem;
+  cursor: pointer;
+  z-index: 1001; /* Asegura que esté por encima del menú colapsado */
+}
+
+/* --- Media Query para Dispositivos Móviles (pantallas pequeñas) --- */
+@media (max-width: 900px) {
+  .navbar {
+    padding: 10px 20px;
+  }
+  
+  /* Mostrar el botón de hamburguesa */
+  .menu-toggle {
+    display: block;
+  }
+
+  /* Ocultar la lista de enlaces por defecto */
+  .nav-links {
+    display: none; /* Oculto por defecto */
+    flex-direction: column; /* Vertical en móvil */
+    position: absolute;
+    top: 60px; /* Debajo de la navbar */
+    left: 0;
+    width: 100%;
+    background-color: #007bff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+  }
+
+  /* Clase para mostrar la lista de enlaces cuando el estado está abierto */
+  .nav-links.open {
+    display: flex;
+  }
+
+  .nav-links li {
+    margin: 0;
+    width: 100%;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .nav-links li:first-child {
+    border-top: none;
+  }
+  
+  .nav-links a, .nav-links button {
+    display: block; /* Ocupa todo el ancho del ítem */
+    width: 100%;
+    padding: 15px 20px;
+    text-align: left;
+    border-radius: 0;
+  }
+}

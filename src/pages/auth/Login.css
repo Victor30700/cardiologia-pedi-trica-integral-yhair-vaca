@@ -1,7 +1,126 @@
-.login-container { display: flex; justify-content: center; align-items: center; height: 80vh; }
-.login-card { background: #2a2a2a; padding: 2rem; border-radius: 10px; width: 350px; text-align: center; }
-.form-group { margin-bottom: 1rem; text-align: left; }
-.form-group input { width: 100%; padding: 8px; margin-top: 5px; }
-.btn-primary { width: 100%; padding: 10px; background: #007bff; color: white; border: none; cursor: pointer; }
-.error-msg { color: #ff6b6b; background: rgba(255,0,0,0.1); padding: 5px; }
-.btn-link { background: none; border: none; color: #4facfe; cursor: pointer; text-decoration: underline; }
+/* src/pages/auth/Login.css */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 90vh; /* Ocupa casi toda la pantalla */
+  padding: 20px;
+  background: linear-gradient(135deg, #e0eaec 0%, #ffffff 100%); /* Degradado sutil limpio */
+}
+
+.login-card {
+  background: var(--white);
+  padding: 2.5rem;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  /* Sombra suave y elegante */
+  box-shadow: 0 10px 30px rgba(0, 123, 255, 0.1);
+  border-top: 5px solid var(--primary-blue); /* Detalle de color superior */
+}
+
+.login-card h2 {
+  font-size: 1.8rem;
+  color: var(--text-dark);
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  margin-bottom: 2rem;
+  display: block;
+}
+
+/* Inputs */
+.form-group {
+  margin-bottom: 1.2rem;
+  text-align: left;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 6px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ced4da;
+  background-color: #f8f9fa;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  box-sizing: border-box; /* IMPORTANTE para que no se salga */
+}
+
+.form-group input:focus {
+  background-color: var(--white);
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+  outline: none;
+}
+
+/* Botón Principal */
+.btn-primary {
+  width: 100%;
+  padding: 12px;
+  background-color: var(--primary-blue);
+  color: var(--white);
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  margin-top: 10px;
+  transition: background 0.3s, transform 0.1s;
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-dark);
+}
+
+.btn-primary:active {
+  transform: scale(0.98);
+}
+
+.btn-primary:disabled {
+  background-color: #a0c4ff;
+  cursor: not-allowed;
+}
+
+/* Enlaces inferiores */
+.toggle-text {
+  margin-top: 25px;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.btn-link {
+  color: var(--primary-blue);
+  font-weight: 600;
+  margin-left: 5px;
+}
+
+.btn-link:hover {
+  text-decoration: underline;
+}
+
+/* Spinner de carga simple */
+.spinner {
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top: 3px solid white;
+  width: 20px;
+  height: 20px;
+  animation: spin 1s linear infinite;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

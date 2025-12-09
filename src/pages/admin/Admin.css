@@ -1,46 +1,38 @@
-/* Estilos Globales del Admin */
-.admin-container { padding: 30px; max-width: 1200px; margin: 0 auto; }
-h1 { color: #007bff; }
+.admin-container { 
+  padding: 20px; 
+  max-width: 1200px; 
+  margin: 0 auto; 
+  width: 100%;
+  box-sizing: border-box;
+}
 
-/* Dashboard Stats Grid */
+h1 { 
+  color: #007bff; 
+  margin-bottom: 10px;
+}
+
+/* Stats Grid Responsive */
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); /* Tarjetas flexibles */
   gap: 20px;
   margin: 30px 0;
 }
+
 .stat-card {
   background: white;
-  padding: 20px;
-  border-radius: 10px;
+  padding: 25px;
+  border-radius: 12px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
   text-align: center;
-}
-.stat-card h2 {
-  font-size: 2.5rem;
-  color: #28a745;
-  margin-bottom: 5px;
-}
-.stat-card p {
-  color: #666;
-  margin-bottom: 10px;
-}
-.stat-card a {
-  display: block;
-  color: #007bff;
-  font-weight: bold;
-  margin-top: 10px;
-  text-decoration: none;
+  transition: transform 0.2s;
 }
 
-/* Citas Recientes / Citas List */
-.citas-recientes-section {
-  margin-top: 40px;
-  padding: 20px;
-  background: #f8f9fa;
-  border-radius: 8px;
+.stat-card:hover {
+  transform: translateY(-5px);
 }
 
+/* Listas de Citas */
 .citas-list {
   display: flex;
   flex-direction: column;
@@ -49,66 +41,151 @@ h1 { color: #007bff; }
 
 .cita-item {
   background: white;
-  padding: 15px;
+  padding: 20px;
   border-left: 5px solid #007bff;
-  border-radius: 5px;
+  border-radius: 8px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap; /* Importante para móviles */
+  gap: 15px;
 }
 
-.citas-list-dashboard {
-    display: flex;
+/* Ajustes para móviles en Admin */
+@media (max-width: 600px) {
+  .cita-item {
     flex-direction: column;
-}
-
-.cita-reciente-item {
-  background: white;
-  padding: 10px;
-  border-bottom: 1px solid #eee;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 0.9rem;
-}
-
-.cita-actions button {
-  padding: 8px 15px;
-  margin-left: 10px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.btn-confirmar { background: #28a745; color: white; }
-.btn-cancelar { background: #dc3545; color: white; }
-
-.cita-status {
-  padding: 3px 8px;
-  border-radius: 4px;
-  font-size: 0.8rem;
-  font-weight: bold;
-  margin-right: 10px;
-}
-
-.status-pendiente { background: #ffc107; color: #333; }
-.status-confirmada { background: #28a745; color: white; }
-.status-cancelada { background: #dc3545; color: white; }
-
-.btn-ver-mas {
-    display: block;
-    text-align: right;
+    align-items: flex-start;
+  }
+  
+  .cita-actions {
+    width: 100%;
+    display: flex;
+    gap: 10px;
     margin-top: 10px;
-    color: #007bff;
-    font-weight: bold;
-    text-decoration: none;
+  }
+
+  .cita-actions button {
+    flex: 1;
+    margin-left: 0;
+  }
 }
 
-/* Reutilizar estilos de GestionServicios.jsx (si los creaste en el paso anterior) */
-.form-horario, .form-servicio { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 20px; }
-.card-admin { background: #f4f4f4; padding: 20px; border-radius: 8px; margin-bottom: 20px; color: #333; }
-.btn-save, .btn-add { background: #28a745; color: white; border: none; padding: 10px; cursor: pointer; border-radius: 5px;}
-.grid-servicios { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; }
-.servicio-item { background: white; border: 1px solid #ddd; padding: 15px; border-radius: 8px; color: #333; }
-.btn-delete { background: #dc3545; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px; width: 100%; margin-top: 10px;}
+/* Soporte Dark Mode Básico */
+@media (prefers-color-scheme: dark) {
+  .stat-card, .cita-item, .cita-reciente-item {
+    background: #2a2a2a;
+    color: #fff;
+  }
+  .stat-card p, .cita-item p {
+    color: #ccc;
+  }
+}
+/* Agrega estos estilos a src/pages/admin/Admin.css */
+
+.btn-eliminar {
+    background-color: #dc3545; /* Rojo */
+    color: white;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.btn-eliminar:hover {
+    background-color: #c82333; /* Rojo más oscuro */
+}
+
+/* Ajuste para que los botones estén juntos */
+.cita-actions {
+    display: flex;
+    gap: 5px; /* Espacio entre botones */
+    margin-top: 10px;
+}
+/* --- Estilos para GestionCurriculum.jsx --- */
+
+.card-admin {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    margin-bottom: 20px;
+}
+
+.form-curriculum { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 20px; 
+}
+
+.input-admin, .textarea-admin { 
+    width: 100%; 
+    padding: 12px; 
+    border: 1px solid #ccc; 
+    border-radius: 8px; 
+    font-size: 1rem; 
+}
+.textarea-admin {
+    resize: vertical;
+}
+
+.form-group label { 
+    display: block; 
+    margin-bottom: 8px; 
+    font-weight: bold; 
+    color: #333; 
+}
+.form-group small { 
+    color: #666; 
+    display: block; 
+    margin-top: 5px; 
+    font-size: 0.85rem;
+}
+
+.preview-section {
+    padding: 20px;
+    border-top: 1px solid #eee;
+    text-align: center;
+}
+
+.btn-ver-cv {
+  display: inline-block; 
+  background: #6c757d; /* Gris */
+  color: white; 
+  padding: 10px 20px;
+  text-decoration: none; 
+  border-radius: 5px; 
+  font-weight: 600;
+  transition: background-color 0.2s;
+}
+
+.btn-ver-cv:hover { 
+    background: #5a6268; 
+}
+/* --- Estilos para la previsualización de la foto en Admin --- */
+.foto-preview-container {
+    text-align: center;
+    margin-bottom: 20px;
+    padding: 10px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    border: 1px dashed #ccc;
+}
+
+.foto-preview-container p {
+    margin: 0 0 10px 0;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.foto-preview {
+    width: 150px;
+    height: 150px;
+    object-fit: cover; /* Asegura que la imagen no se deforme */
+    border-radius: 50%; /* Hace la imagen redonda */
+    border: 3px solid #007bff;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
