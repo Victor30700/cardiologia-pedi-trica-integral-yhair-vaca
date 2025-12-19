@@ -6,6 +6,7 @@ import "./Investigacion.css";
 export default function Investigacion() {
   const [articulos, setArticulos] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [expandedId, setExpandedId] = useState(null);
 
   useEffect(() => {
     const fetchNoticias = async () => {
@@ -48,7 +49,11 @@ export default function Investigacion() {
       ) : (
         <div className="blog-grid slide-up delay-1">
           {articulos.map((articulo) => (
-            <article key={articulo.id} className="blog-card">
+            <article 
+              key={articulo.id} 
+              className={`blog-card ${expandedId === articulo.id ? 'expanded' : ''}`}
+              onClick={() => setExpandedId(expandedId === articulo.id ? null : articulo.id)}
+            >
               <div className="card-top-accent"></div>
               <div className="blog-content">
                 <div className="meta-info">
@@ -65,7 +70,9 @@ export default function Investigacion() {
                 </div>
                 
                 <div className="card-footer">
-                  <span className="read-more">Leer publicación completa →</span>
+                  <span className="read-more">
+                    {expandedId === articulo.id ? 'Leer menos ↑' : 'Leer publicación completa →'}
+                  </span>
                 </div>
               </div>
             </article>

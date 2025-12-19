@@ -81,6 +81,7 @@
   display: flex;
   flex-direction: column;
   position: relative;
+  cursor: pointer;
 }
 
 .blog-card:hover {
@@ -145,6 +146,15 @@
 .content-body {
   margin-bottom: 25px;
   flex-grow: 1;
+  max-height: 150px; /* Altura inicial para el truncado */
+  overflow: hidden;
+  transition: max-height 0.7s ease-in-out;
+  position: relative;
+}
+
+.blog-card.expanded .content-body {
+  max-height: 1000px; /* Altura máxima al expandir */
+  transition: max-height 0.7s ease-in-out;
 }
 
 .content-body p {
@@ -152,12 +162,6 @@
   line-height: 1.7;
   font-size: 1rem;
   white-space: pre-wrap; /* Mantiene párrafos */
-  
-  /* Truncado elegante de texto largo (opcional visualmente) */
-  display: -webkit-box;
-  -webkit-line-clamp: 6; /* Muestra máximo 6 líneas */
-  -webkit-box-orient: vertical;
-  overflow: hidden;
 }
 
 /* Footer de la tarjeta */
@@ -170,7 +174,6 @@
   color: var(--primary-color);
   font-weight: 700;
   font-size: 0.95rem;
-  cursor: pointer;
   transition: padding-left 0.2s;
 }
 
